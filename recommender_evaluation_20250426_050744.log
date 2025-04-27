@@ -1,0 +1,100 @@
+2025-04-26 05:07:45,660 - INFO - Successfully loaded datasets. Anime dataset shape: (12294, 7), Ratings dataset shape: (7813737, 3)
+2025-04-26 05:07:47,125 - INFO - Cosine similarity matrix computed successfully
+2025-04-26 05:07:47,125 - INFO - Starting anime recommender system evaluation
+2025-04-26 05:07:47,125 - INFO - Starting evaluation of anime recommender system...
+2025-04-26 05:07:47,125 - INFO - Evaluating similarity metrics...
+2025-04-26 05:07:47,125 - INFO - Starting similarity quality evaluation with sample size: 1000
+2025-04-26 05:07:47,295 - INFO - Similarity quality evaluation completed: {'Correlation': np.float64(0.9364060730389159), 'Jaccard Mean': np.float64(0.08185108020634337), 'Cosine Mean': np.float64(0.10169827677686262), 'Sample Size': 988}
+2025-04-26 05:07:47,295 - INFO - Evaluating ranking metrics...
+2025-04-26 05:07:47,295 - INFO - Starting ranking quality evaluation with 1000 samples
+2025-04-26 05:09:12,666 - INFO - Details of 8 skipped anime in ranking evaluation:
+2025-04-26 05:09:12,666 - INFO -   1. ID: 33389, Title: 'Genba no Joukitsune', Reason: Invalid or empty genre information
+2025-04-26 05:09:12,666 - INFO -   2. ID: 31760, Title: 'Tsuru Shitae Waka Kan', Reason: Invalid or empty genre information
+2025-04-26 05:09:12,666 - INFO -   3. ID: 31511, Title: 'Holiday', Reason: Invalid or empty genre information
+2025-04-26 05:09:12,667 - INFO -   4. ID: 33187, Title: 'Katsudou Shashin', Reason: Invalid or empty genre information
+2025-04-26 05:09:12,667 - INFO -   5. ID: 33845, Title: 'Free! (Shinsaku)', Reason: No recommendations found
+2025-04-26 05:09:12,667 - INFO -   6. ID: 33319, Title: 'Wareware no Heya', Reason: Invalid or empty genre information
+2025-04-26 05:09:12,667 - INFO -   7. ID: 28487, Title: 'Ikite Iru', Reason: Invalid or empty genre information
+2025-04-26 05:09:12,667 - INFO -   8. ID: 19219, Title: 'Modern No.2', Reason: Invalid or empty genre information
+2025-04-26 05:09:12,669 - INFO - Ranking quality evaluation completed: {'Precision@K': np.float64(0.9996975806451613), 'NDCG': np.float64(0.9546317941313529), 'Successfully Processed': 992, 'Sample Size': 1000, 'Skipped Anime': [{'anime_id': np.int64(33389), 'title': 'Genba no Joukitsune', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(31760), 'title': 'Tsuru Shitae Waka Kan', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(31511), 'title': 'Holiday', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(33187), 'title': 'Katsudou Shashin', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(33845), 'title': 'Free! (Shinsaku)', 'reason': 'No recommendations found'}, {'anime_id': np.int64(33319), 'title': 'Wareware no Heya', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(28487), 'title': 'Ikite Iru', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(19219), 'title': 'Modern No.2', 'reason': 'Invalid or empty genre information'}]}
+2025-04-26 05:09:12,669 - INFO - Evaluating coverage and diversity...
+2025-04-26 05:09:12,669 - INFO - Starting coverage and diversity evaluation with sample size: 1000
+2025-04-26 05:10:52,450 - INFO - Coverage and diversity evaluation completed: {'Coverage': 0.23808361802505287, 'Average Diversity': np.float64(0.18751287929394142), 'Unique Anime Recommended': 2927, 'Total Anime': 12294, 'Sample Size': 1000}
+2025-04-26 05:10:52,452 - INFO - Performing external validation with ratings...
+2025-04-26 05:10:52,452 - INFO - Starting rating validation with sample size: 100
+2025-04-26 05:10:52,473 - INFO - Finding similar anime pairs from 1000 sampled anime...
+2025-04-26 05:10:52,484 - INFO - Processed 100/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,484 - INFO - Processed 200/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,484 - INFO - Processed 300/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,484 - INFO - Processed 400/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,484 - INFO - Processed 500/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,484 - INFO - Processed 600/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,484 - INFO - Processed 700/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,485 - INFO - Processed 800/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,485 - INFO - Processed 900/1000 anime, found 179 similar pairs
+2025-04-26 05:10:52,485 - INFO - Found 179 similar anime pairs after checking 10989 pairs
+2025-04-26 05:10:52,485 - INFO - Filtering summary: 9821 pairs below similarity threshold (0.8)
+2025-04-26 05:10:52,485 - INFO - Stopped searching after checking 10000 pairs
+2025-04-26 05:10:52,493 - INFO - Processing ratings for 108 unique anime
+2025-04-26 05:10:52,585 - INFO - Filtered ratings dataset: 7196 ratings from 3113 users
+2025-04-26 05:10:52,585 - INFO - Comparing ratings for 100 anime pairs...
+2025-04-26 05:10:52,712 - INFO - Processed 10/100 anime pairs
+2025-04-26 05:10:52,749 - INFO - Processed 20/100 anime pairs
+2025-04-26 05:10:52,772 - INFO - Processed 30/100 anime pairs
+2025-04-26 05:10:52,792 - INFO - Processed 40/100 anime pairs
+2025-04-26 05:10:52,815 - INFO - Processed 50/100 anime pairs
+2025-04-26 05:10:52,836 - INFO - Processed 60/100 anime pairs
+2025-04-26 05:10:52,864 - INFO - Processed 70/100 anime pairs
+2025-04-26 05:10:52,885 - INFO - Processed 80/100 anime pairs
+2025-04-26 05:10:52,908 - INFO - Processed 90/100 anime pairs
+2025-04-26 05:10:52,929 - INFO - 37 anime pairs had no common raters:
+2025-04-26 05:10:52,929 - INFO -   1. 'Many Mary' and '3-D Tengoku' (similarity: 1.0000)
+2025-04-26 05:10:52,929 - INFO -   2. 'Medamayaki no Kimi Itsu Tsubusu?' and 'Naniwa Kinyuu Den: Minami no Teiou' (similarity: 0.8515)
+2025-04-26 05:10:52,929 - INFO -   3. 'Many Mary' and 'Shangri-La (Music)' (similarity: 1.0000)
+2025-04-26 05:10:52,929 - INFO -   4. 'Sore Ike! Anpanman: Baikinman vs. Baikinman!?' and 'Sore Ike! Anpanman: Lyrical☆Magical Mahou no Gakkou' (similarity: 1.0000)
+2025-04-26 05:10:52,929 - INFO -   5. 'Many Mary' and 'Fujilog (ONA)' (similarity: 0.8802)
+2025-04-26 05:10:52,930 - INFO -   6. 'Sore Ike! Anpanman: Baikinman vs. Baikinman!?' and 'Kero Kero Keroppi no Aladdin to Mahou no Lamp' (similarity: 0.8986)
+2025-04-26 05:10:52,930 - INFO -   7. 'Chousoku Spinner' and 'Tiger Mask Fuku Men League Sen' (similarity: 1.0000)
+2025-04-26 05:10:52,930 - INFO -   8. 'Sore Ike! Anpanman: Baikinman vs. Baikinman!?' and 'Tsurupika Hagemaru-kun' (similarity: 0.8044)
+2025-04-26 05:10:52,930 - INFO -   9. 'Denshinbashira no Okaasan' and 'Moudouken Quill no Isshou' (similarity: 1.0000)
+2025-04-26 05:10:52,930 - INFO -   10. 'Sore Ike! Anpanman: Baikinman vs. Baikinman!?' and 'MapleStory Special' (similarity: 0.8771)
+2025-04-26 05:10:52,930 - INFO -   ... and 27 more pairs
+2025-04-26 05:10:52,930 - INFO - Rating validation completed: {'Correlation': np.float64(0.12621500021979135), 'Average Rating Difference': np.float64(1.2083333333333333), 'Sample Size': 336, 'Pairs Without Common Raters': 37, 'Total Pairs Checked': 10989}
+2025-04-26 05:10:52,930 - INFO - Performing user-based evaluation...
+2025-04-26 05:10:52,930 - INFO - Starting user-based evaluation with 1000 users
+2025-04-26 05:12:32,321 - INFO - User-based evaluation completed: {'MAP': np.float64(0.011729870169186994), 'MRR': np.float64(0.11355034454386506), 'Users Processed': 926}
+2025-04-26 05:12:32,322 - INFO - 
+Evaluation Results:
+2025-04-26 05:12:32,323 - INFO - 
+Similarity Metrics:
+2025-04-26 05:12:32,323 - INFO -   Correlation: 0.9364060730389159
+2025-04-26 05:12:32,323 - INFO -   Jaccard Mean: 0.08185108020634337
+2025-04-26 05:12:32,323 - INFO -   Cosine Mean: 0.10169827677686262
+2025-04-26 05:12:32,323 - INFO -   Sample Size: 988
+2025-04-26 05:12:32,323 - INFO - 
+Ranking Metrics:
+2025-04-26 05:12:32,323 - INFO -   Precision@K: 0.9996975806451613
+2025-04-26 05:12:32,323 - INFO -   NDCG: 0.9546317941313529
+2025-04-26 05:12:32,323 - INFO -   Successfully Processed: 992
+2025-04-26 05:12:32,323 - INFO -   Sample Size: 1000
+2025-04-26 05:12:32,323 - INFO -   Skipped Anime: [{'anime_id': np.int64(33389), 'title': 'Genba no Joukitsune', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(31760), 'title': 'Tsuru Shitae Waka Kan', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(31511), 'title': 'Holiday', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(33187), 'title': 'Katsudou Shashin', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(33845), 'title': 'Free! (Shinsaku)', 'reason': 'No recommendations found'}, {'anime_id': np.int64(33319), 'title': 'Wareware no Heya', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(28487), 'title': 'Ikite Iru', 'reason': 'Invalid or empty genre information'}, {'anime_id': np.int64(19219), 'title': 'Modern No.2', 'reason': 'Invalid or empty genre information'}]
+2025-04-26 05:12:32,323 - INFO - 
+Coverage and Diversity:
+2025-04-26 05:12:32,323 - INFO -   Coverage: 0.23808361802505287
+2025-04-26 05:12:32,323 - INFO -   Average Diversity: 0.18751287929394142
+2025-04-26 05:12:32,323 - INFO -   Unique Anime Recommended: 2927
+2025-04-26 05:12:32,323 - INFO -   Total Anime: 12294
+2025-04-26 05:12:32,324 - INFO -   Sample Size: 1000
+2025-04-26 05:12:32,324 - INFO - 
+External Validation:
+2025-04-26 05:12:32,324 - INFO -   Correlation: 0.12621500021979135
+2025-04-26 05:12:32,324 - INFO -   Average Rating Difference: 1.2083333333333333
+2025-04-26 05:12:32,324 - INFO -   Sample Size: 336
+2025-04-26 05:12:32,324 - INFO -   Pairs Without Common Raters: 37
+2025-04-26 05:12:32,324 - INFO -   Total Pairs Checked: 10989
+2025-04-26 05:12:32,324 - INFO -   MAP: 0.011729870169186994
+2025-04-26 05:12:32,324 - INFO -   MRR: 0.11355034454386506
+2025-04-26 05:12:32,324 - INFO -   Users Processed: 926
+2025-04-26 05:12:32,344 - INFO - Results saved to recommender_results_20250426_051232.csv
+2025-04-26 05:12:32,344 - INFO - 
+Evaluation completed successfully! Results saved to recommender_results_20250426_051232.csv
