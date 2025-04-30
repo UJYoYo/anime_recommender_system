@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anime Recommender</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Add floating bubbles -->
+  <div class="bubbles-container">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+  </div>
+  
+  <div class="container">
+    <div class="sidebar">
+      <button class="tab-button" onclick="showAll()">All Anime</button>
+      <div class="genre-list">
+        <!-- Genres will be dynamically added here -->
+      </div>
+      
+      <!-- Add ordering options -->
+      <div class="ordering-section">
+        <h3>Order By</h3>
+        <div class="order-options">
+          <p onclick="setOrderBy('rating')">Rating</p>
+          <p onclick="setOrderBy('title')">Alphabet</p>
+          <p onclick="setOrderBy('episodes')">Episodes</p>
+        </div>
+        
+        <div class="order-direction">
+          <select id="order-direction" onchange="changeOrderDirection()">
+            <option value="desc">Descending</option>
+            <option value="asc">Ascending</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="main-content">
+      <h2 id="section-title">Top Rated Anime</h2>
+      <div id="anime-list" class="anime-grid">
+        <!-- Anime name cards will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Anime Details Popup -->
+  <div id="anime-popup" class="anime-popup">
+    <div class="popup-content">
+      <h1 id="popup-title"></h1>
+      <p id="popup-genre"></p>
+      <div class="popup-buttons">
+        <button id="back-btn">Go Back</button>
+        <button id="watch-btn">Watch</button>
+      </div>
+      
+      <!-- Add recommendations section -->
+      <div class="recommendations-section">
+        <h3>Recommended Anime</h3>
+        <div id="recommendations-grid" class="recommendations-grid">
+          <!-- Recommendation items will be added here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allAnime = [];
+    let animeByGenre = {};
+    let currentOrderBy = 'rating'; // Default ordering
+    let currentOrderDirection = 'desc'; // Default direction
+    let currentDisplayedAnime = []; // Keep track of currently displayed anime
+    let currentTitle = ''; // Keep track of current section title
+    
+    // Function to fetch and parse CSV file
+    async function loadAnimeData() {
+      try {
+        const response = await fetch('anime.csv');
+        const csvData = await response.text();
+        
+        // Parse CSV data
+        const rows = csvData.split('\n').slice(1); // Skip header row
+        
+        for (let i = 0; i < rows.length; i++) {
+          if (!rows[i].trim()) continue;
+          
+          // Handle commas inside quotes properly
+          const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+          const values = rows[i].split(regex);
+          
+          if (values.length < 3) continue;
+          
+          const anime_id = values[0];
+          const title = values[1].replace(/^"|"$/g, ''); // Remove quotes if present
+          const genreStr = values[2].replace(/^"|"$/g, '');
+          const type = values[3];
+          const episodes = values[4];
+          const rating = parseFloat(values[5]);
+          const members = parseInt(values[6]);
+          
+          // Create anime object
+          const animeObj = {
+            id: anime_id,
+            title: title,
+            genres: genreStr,
+            type: type,
+            episodes: episodes,
+            rating: rating,
+            members: members
+          };
+          
+          allAnime.push(animeObj);
+          
+          // Extract and add genres to animeByGenre
+          const genres = genreStr.split(', ');
+          genres.forEach(genre => {
+            if (!animeByGenre[genre]) {
+              animeByGenre[genre] = [];
+            }
+            animeByGenre[genre].push(animeObj);
+          });
+        }
+        
+        // Sort anime by rating (highest first)
+        allAnime.sort((a, b) => b.rating - a.rating);
+        
+        // Sort each genre list by rating
+        Object.keys(animeByGenre).forEach(genre => {
+          animeByGenre[genre].sort((a, b) => b.rating - a.rating);
+        });
+        
+        // Update the sidebar with available genres
+        updateGenreSidebar();
+        
+        // Show all anime initially
+        showAll();
+      } catch (error) {
+        console.error('Error loading CSV data:', error);
+        document.getElementById('anime-list').innerHTML = '<p>Error loading anime data. Please try again later.</p>';
+      }
+    }
+    
+    function updateGenreSidebar() {
+      const genreList = document.querySelector('.genre-list');
+      genreList.innerHTML = ''; // Clear existing genres
+      
+      // Get the 8 most popular genres (by number of anime)
+      const popularGenres = Object.keys(animeByGenre)
+        .filter(g => g.trim()) // Remove empty genres
+        .sort((a, b) => animeByGenre[b].length - animeByGenre[a].length)
+        .slice(0, 8);
+      
+      // Add each genre as a clickable item
+      popularGenres.forEach(genre => {
+        const p = document.createElement('p');
+        p.textContent = genre;
+        p.onclick = () => showGenre(genre);
+        genreList.appendChild(p);
+      });
+    }
+
+    function renderList(animeArray, title) {
+      const listContainer = document.getElementById("anime-list");
+      const sectionTitle = document.getElementById("section-title");
+      sectionTitle.innerText = title;
+      listContainer.innerHTML = "";
+      
+      // Keep track of current displayed anime and title for reordering
+      currentDisplayedAnime = [...animeArray];
+      currentTitle = title;
+      
+      // Order the anime based on current ordering
+      orderAnime(currentDisplayedAnime);
+      
+      // Display all anime without any limits
+      currentDisplayedAnime.forEach(anime => {
+        const div = document.createElement("div");
+        div.className = "anime-card";
+        div.innerText = anime.title;
+        div.addEventListener("click", function() {
+          showAnimePopup(anime);
+        });
+        listContainer.appendChild(div);
+      });
+    }
+    
+    // Function to set the ordering method
+    function setOrderBy(orderBy) {
+      currentOrderBy = orderBy;
+      // Re-render with new ordering
+      renderList(currentDisplayedAnime, currentTitle);
+    }
+    
+    // Function to change order direction
+    function changeOrderDirection() {
+      const directionSelect = document.getElementById("order-direction");
+      currentOrderDirection = directionSelect.value;
+      // Re-render with new direction
+      renderList(currentDisplayedAnime, currentTitle);
+    }
+    
+    // Function to order anime array
+    function orderAnime(animeArray) {
+      switch(currentOrderBy) {
+        case 'rating':
+          animeArray.sort((a, b) => {
+            return currentOrderDirection === 'desc' ? 
+              b.rating - a.rating : 
+              a.rating - b.rating;
+          });
+          break;
+        case 'title':
+          animeArray.sort((a, b) => {
+            return currentOrderDirection === 'desc' ? 
+              b.title.localeCompare(a.title) : 
+              a.title.localeCompare(b.title);
+          });
+          break;
+        case 'episodes':
+          animeArray.sort((a, b) => {
+            // Handle 'Unknown' episodes
+            const aEp = a.episodes === 'Unknown' ? Infinity : parseInt(a.episodes);
+            const bEp = b.episodes === 'Unknown' ? Infinity : parseInt(b.episodes);
+            
+            return currentOrderDirection === 'desc' ? 
+              bEp - aEp : 
+              aEp - bEp;
+          });
+          break;
+      }
+    }
+    
+    async function showAnimePopup(anime) {
+      // Set anime title
+      document.getElementById("popup-title").textContent = anime.title;
+      
+      // Set genre
+      document.getElementById("popup-genre").textContent = "Genre: " + anime.genres;
+      
+      // Show "Loading recommendations..." while fetching data
+      document.getElementById("recommendations-grid").innerHTML = "<p>Loading recommendations...</p>";
+      
+      // Show popup
+      document.getElementById("anime-popup").style.display = "flex";
+      
+      try {
+        // Fetch recommendations from the API
+        const recommendations = await fetchRecommendations(anime.title, 6);
+        displayRecommendations(recommendations);
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+        // Use local fallback recommendations if API fails
+        const fallbackRecommendations = getRecommendations(anime, 6);
+        displayRecommendations(fallbackRecommendations);
+      }
+    }
+    
+    // Fetch recommendations from the API
+    async function fetchRecommendations(title, count) {
+      try {
+        console.log(`Fetching recommendations for: ${title}`);
+        const response = await fetch(`/api/recommend?title=${encodeURIComponent(title)}&count=${count}`);
+        
+        if (!response.ok) {
+            console.log('API response not OK:', response.status);
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch recommendations');
+        }
+        
+        const data = await response.json();
+        console.log('Received recommendations:', data);
+        return data;
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+        throw error;
+      }
+    }
+    
+    // Use fallback recommendations when API is unavailable
+    function getRecommendations(currentAnime, count) {
+      // Extract genres of the current anime
+      const genres = currentAnime.genres.split(', ');
+      const animeType = currentAnime.type;
+      
+      // Create a map to store similarity scores for each anime
+      const similarityScores = new Map();
+      
+      // Calculate similarity score for each anime (except the current one)
+      allAnime.forEach(anime => {
+        if (anime.id === currentAnime.id) return; // Skip the current anime
+        
+        // First filter by type
+        if (anime.type !== animeType) return; // Skip anime of different type
+        
+        const animeGenres = anime.genres.split(', ');
+        let matchingGenres = 0;
+        
+        // Count matching genres
+        genres.forEach(genre => {
+          if (animeGenres.includes(genre)) {
+            matchingGenres++;
+          }
+        });
+        
+        // Calculate score based on matching genres and rating
+        const genreScore = genres.length > 0 ? matchingGenres / genres.length : 0;
+        const ratingBonus = anime.rating / 10; // Give some weight to higher rated anime
+        const score = genreScore * 0.7 + ratingBonus * 0.3; // 70% genre match, 30% rating
+        
+        similarityScores.set(anime, score);
+      });
+      
+      // Sort anime by similarity score (highest first)
+      let sortedAnime = Array.from(similarityScores.entries())
+        .sort((a, b) => b[1] - a[1])
+        .map(entry => entry[0]);
+      
+      // If we don't have enough same-type recommendations, include other types
+      if (sortedAnime.length < count) {
+        const remainingNeeded = count - sortedAnime.length;
+        
+        // Find recommendations from different types
+        const otherTypeScores = new Map();
+        
+        allAnime.forEach(anime => {
+          if (anime.id === currentAnime.id) return; // Skip the current anime
+          if (anime.type === animeType) return; // Skip same type (already processed)
+          
+          const animeGenres = anime.genres.split(', ');
+          let matchingGenres = 0;
+          
+          // Count matching genres
+          genres.forEach(genre => {
+            if (animeGenres.includes(genre)) {
+              matchingGenres++;
+            }
+          });
+          
+          // Calculate score
+          const genreScore = genres.length > 0 ? matchingGenres / genres.length : 0;
+          const ratingBonus = anime.rating / 10;
+          const score = genreScore * 0.7 + ratingBonus * 0.3;
+          
+          otherTypeScores.set(anime, score);
+        });
+        
+        // Get and sort other type recommendations
+        const otherTypeAnime = Array.from(otherTypeScores.entries())
+          .sort((a, b) => b[1] - a[1])
+          .map(entry => entry[0])
+          .slice(0, remainingNeeded);
+        
+        // Add them to our results
+        sortedAnime = sortedAnime.concat(otherTypeAnime);
+      }
+      
+      // Return the top N recommendations (sort by rating)
+      return sortedAnime.slice(0, count).sort((a, b) => b.rating - a.rating);
+    }
+    
+    // Display recommendations in the popup
+    function displayRecommendations(recommendations) {
+      const grid = document.getElementById("recommendations-grid");
+      grid.innerHTML = "";
+      
+      if (!recommendations || recommendations.length === 0) {
+        grid.innerHTML = "<p>No recommendations found</p>";
+        return;
+      }
+      
+      recommendations.forEach(anime => {
+        const item = document.createElement("div");
+        item.className = "recommendation-item";
+        
+        // Use either title or name depending on the data source
+        const title = anime.title || anime.name;
+        
+        // Add rating if available
+        let displayText = title;
+        if (anime.rating) {
+          displayText += ` (${anime.rating.toFixed(1)})`;
+        }
+        
+        item.innerText = displayText;
+        
+        // Add click event to show this anime's details
+        item.addEventListener("click", function() {
+          // Close current popup first
+          document.getElementById("anime-popup").style.display = "none";
+          
+          // Find the anime in our local database
+          const animeData = findAnimeByTitle(title);
+          
+          // Small delay to avoid visual glitches
+          setTimeout(() => {
+            if (animeData) {
+              showAnimePopup(animeData);
+            } else {
+              // If anime not found in local data, create a temporary object
+              showAnimePopup({
+                id: 'temp',
+                title: title,
+                genres: anime.genre || '',
+                type: anime.type || 'Unknown',
+                episodes: 'Unknown',
+                rating: anime.rating || 0
+              });
+            }
+          }, 50);
+        });
+        
+        grid.appendChild(item);
+      });
+    }
+    
+    // Helper function to find anime by title in our local data
+    function findAnimeByTitle(title) {
+      return allAnime.find(anime => anime.title === title);
+    }
+    
+    function closeAnimePopup() {
+      document.getElementById("anime-popup").style.display = "none";
+    }
+    
+    // Add event listeners for popup buttons
+    document.getElementById("back-btn").addEventListener("click", closeAnimePopup);
+    document.getElementById("watch-btn").addEventListener("click", closeAnimePopup);
+
+    function showAll() {
+      renderList(allAnime, "All Anime");  // Changed title to "All Anime"
+    }
+    
+    function showGenre(genre) {
+      if (animeByGenre[genre]) {
+        renderList(animeByGenre[genre], `${genre} Anime`);
+      }
+    }
+
+    // Load data from CSV when page loads
+    window.onload = () => loadAnimeData();
+  </script>
+</body>
+</html>
